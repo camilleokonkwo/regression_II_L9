@@ -1,0 +1,56 @@
+---
+title: "hw9"
+author: "Camille Okonkwo"
+date: "2024-04-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+
+# Import Data and Preparation
+```{r}
+hwdata4 = read_csv("data/hwdata4.csv")
+
+# data prep
+hwdata4$treat = as.factor(hwdata4$treat)
+hwdata4$tree = as.factor(hwdata4$tree)
+```
+
+
+1. Draw the spaghetti plots of the size of the tree on the growing time with separate panels for the two growing environments.
+```{r}
+
+```
+
+
+2.	Write a random intercept model with the covariates including time, environment, and their interaction.
+```{r}
+
+```
+
+3.	Was the trajectory of growth in the tree size over time different between the two environments? Perform a statistical test. Show the hypotheses, test statistic, p-value, and conclusion.
+```{r}
+
+```
+
+
+4.	Calculate the within-subject correlation coefficient. What’s your observation? 
+```{r}
+
+```
+
+
+5.	Write a random intercept and slope model with the covariates including time, environment, and their interaction, and random slope for time. 
+```{r}
+
+```
+
+6.	Do we need the random intercept and slope model in addition to the random intercept model? Perform a statistical test. Show the hypotheses, test statistic, p-value, and conclusion
+```{r}
+
+```
+
