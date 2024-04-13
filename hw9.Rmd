@@ -18,39 +18,71 @@ hwdata4 = read_csv("data/hwdata4.csv")
 # data prep
 hwdata4$treat = as.factor(hwdata4$treat)
 hwdata4$tree = as.factor(hwdata4$tree)
+
+hwdata4$treat2 = relevel(factor(hwdata4$treat,
+                                labels =c("Ozone: grown under ozone environment", "Control: ozone free")),
+                         ref = "Control: ozone free")
 ```
 
 
 1. Draw the spaghetti plots of the size of the tree on the growing time with separate panels for the two growing environments.
 ```{r}
-
-```
-
-
-2.	Write a random intercept model with the covariates including time, environment, and their interaction.
-```{r}
-
+# spaghetti plot of size by time
+hwdata4 |> 
+  ggplot(aes(x = time, y = size, group = tree))+
+  geom_point() +
+  geom_line() +
+  theme_bw() +
+  stat_smooth(aes(group = 1),method = "lm",
+              geom = "smooth",se =FALSE) +
+  facet_grid(.~treat2, scales = "free") +
+  labs(x = "Days after January 1st", y = "Size of the tree (log(height × diameter^2))") +
+  ggtitle("Spaghetti Plot of Size of Spruce Trees Over Time by Treatment Environment")
 ```
 
 3.	Was the trajectory of growth in the tree size over time different between the two environments? Perform a statistical test. Show the hypotheses, test statistic, p-value, and conclusion.
 ```{r}
+library(nlme)
+# wald test
+hwdata4$treat = relevel(hwdata4$treat,
+                        ref="ozone")
 
+fit1 = lme(size ~ time + treat + time:treat,
+           data = hwdata4, method = "ML",
+           random = ~1 | tree,
+           na.action = na.omit)
+summary(fit1)
+
+G = (0.000080/0.00017124)^2
+G
+
+pchisq(G, df = 1, lower.tail = F)
 ```
-
 
 4.	Calculate the within-subject correlation coefficient. What’s your observation? 
 ```{r}
-
-```
-
-
-5.	Write a random intercept and slope model with the covariates including time, environment, and their interaction, and random slope for time. 
-```{r}
-
+VarCorr(fit1)
+varests = as.numeric(VarCorr(fit1))
+rho = varests[1]/(varests[1]+varests[2])
+rho
 ```
 
 6.	Do we need the random intercept and slope model in addition to the random intercept model? Perform a statistical test. Show the hypotheses, test statistic, p-value, and conclusion
 ```{r}
+fit2 = lme(size ~ time + treat + time:treat2,
+           data = hwdata4,
+           method = "ML",
+           random = ~1 + time|tree)
 
+summary(fit2)
+
+logLik(fit2)
+logLik(fit1)
+
+G_2 = -2*(logLik(fit1)-logLik(fit2))
+G_2
+
+anova(fit1, fit2)
+
+pchisq(G_2, df = 2, lower.tail = F)
 ```
-
